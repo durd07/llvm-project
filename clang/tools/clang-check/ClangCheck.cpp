@@ -183,7 +183,7 @@ public:
                                     /*Deserialize=*/false,
                                     /*DumpLookups=*/false,
                                     /*DumpDeclTypes=*/false,
-                                    clang::ADOF_Default);
+                                    clang::ADOF_JSON);
     if (ASTPrint)
       return clang::CreateASTPrinter(nullptr, ASTDumpFilter);
     return std::make_unique<clang::ASTConsumer>();

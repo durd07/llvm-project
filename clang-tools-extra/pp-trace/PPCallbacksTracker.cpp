@@ -321,7 +321,12 @@ void PPCallbacksTracker::MacroExpands(const Token &MacroNameTok,
   appendArgument("MacroNameTok", MacroNameTok);
   appendArgument("MacroDefinition", MacroDefinition);
   appendArgument("Range", Range);
-  appendArgument("Args", Args);
+  //appendArgument("Args", Args);
+
+  if (MacroDefinition.getLocalDirective()) {
+    appendArgument("MacroDefinitionBegin", getSourceLocationString(PP, MacroDefinition.getLocalDirective()->getMacroInfo()->getDefinitionLoc()));
+    appendArgument("MacroDefinitionEnd", getSourceLocationString(PP, MacroDefinition.getLocalDirective()->getMacroInfo()->getDefinitionEndLoc()));
+  }
 }
 
 // Hook called whenever a macro definition is seen.
@@ -575,6 +580,7 @@ void PPCallbacksTracker::appendArgument(const char *Name,
 // Append a MacroDefinition argument to the top trace item.
 void PPCallbacksTracker::appendArgument(const char *Name,
                                         const MacroDefinition &Value) {
+
   std::string Str;
   llvm::raw_string_ostream SS(Str);
   SS << "[";
@@ -588,7 +594,13 @@ void PPCallbacksTracker::appendArgument(const char *Name,
     SS << MM->getOwningModule()->getFullModuleName();
   }
   SS << "]";
+
   appendArgument(Name, SS.str());
+
+  std::string Str2;
+  llvm::raw_string_ostream SS2(Str2);
+  SS2 << Value.getLocalDirective();
+  appendArgument("MacroDefinitionId", SS2.str());
 }
 
 // Append a MacroArgs argument to the top trace item.

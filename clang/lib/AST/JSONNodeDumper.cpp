@@ -253,6 +253,7 @@ void JSONNodeDumper::writeBareSourceLocation(SourceLocation Loc,
       JOS.attribute("file", ActualFile);
       JOS.attribute("line", ActualLine);
     } else if (LastLocLine != ActualLine)
+      JOS.attribute("file", ActualFile);
       JOS.attribute("line", ActualLine);
 
     StringRef PresumedFile = Presumed.getFilename();
@@ -903,6 +904,7 @@ void JSONNodeDumper::VisitVarDecl(const VarDecl *VD) {
     }
   }
   attributeOnlyIfTrue("isParameterPack", VD->isParameterPack());
+  attributeOnlyIfTrue("isDefinition", VD->isThisDeclarationADefinition());
 }
 
 void JSONNodeDumper::VisitFieldDecl(const FieldDecl *FD) {
@@ -931,6 +933,8 @@ void JSONNodeDumper::VisitFunctionDecl(const FunctionDecl *FD) {
   if (FD->isDefaulted())
     JOS.attribute("explicitlyDefaulted",
                   FD->isDeleted() ? "deleted" : "default");
+
+  attributeOnlyIfTrue("isDefinition", FD->isThisDeclarationADefinition());
 }
 
 void JSONNodeDumper::VisitEnumDecl(const EnumDecl *ED) {
